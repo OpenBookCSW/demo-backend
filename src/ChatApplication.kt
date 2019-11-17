@@ -78,6 +78,14 @@ class ChatApplication {
          */
         routing {
 
+            /**
+             * We're saying that an agency POSTs to this endpoint to send the models a notice that
+             * the job is available.
+             */
+            post("/send") {
+                server2.broadcastOpenJob()
+            }
+
             // TODO : send endpoint to the members of server2
 
             webSocket("/ws2") {
@@ -87,7 +95,9 @@ class ChatApplication {
                     return@webSocket
                 }
 
-                server2.sendCompanies(session.id, this)
+                val member = session.id
+                server2.memberJoin(member, this)
+                server2.sendCompanies(member, this)
 
                 // We starts receiving messages (frames).
                 // Since this is a coroutine. This coroutine is suspended until receiving frames.
