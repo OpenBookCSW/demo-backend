@@ -1,0 +1,15 @@
+# Gradle
+build
+target
+out/
+.gradle
+
+# Idea
+.idea/*
+!.idea/runConfigurations/
+*.iml
+
+# Other
+local.properties
+*.lock
+/app/snippets-api
