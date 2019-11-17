@@ -6,13 +6,14 @@ import io.ktor.http.cio.websocket.*
 import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.content.*
+import io.ktor.response.header
+import io.ktor.response.respondText
 import io.ktor.routing.*
 import io.ktor.sessions.*
 import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.*
-import kotlinx.coroutines.flow.flowOf
 import java.time.*
 
 /**
@@ -26,6 +27,8 @@ import java.time.*
  * an extension of the [Application] class, and thus can be accessed like a normal member `myapplication.main()`.
  */
 @ExperimentalCoroutinesApi
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@io.ktor.util.KtorExperimentalAPI
 fun Application.main() {
     ChatApplication().apply { main() }
 }
@@ -34,6 +37,8 @@ fun Application.main() {
  * In this case we have a class holding our application state so it is not global and can be tested easier.
  */
 @ExperimentalCoroutinesApi
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@io.ktor.util.KtorExperimentalAPI
 class ChatApplication {
     /**
      * This class handles the logic of a [ChatServer].
@@ -83,10 +88,11 @@ class ChatApplication {
              * the job is available.
              */
             post("/send") {
-                server2.broadcastOpenJob()
+                server2.broadcastOpenJob("TheLimited")
+                val response = call.response
+                response.header("Access-Control-Allow-Origin", "*")
+                call.respondText("Hey!")
             }
-
-            // TODO : send endpoint to the members of server2
 
             webSocket("/ws2") {
                 val session = call.sessions.get<ChatSession>()

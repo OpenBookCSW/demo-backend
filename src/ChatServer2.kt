@@ -4,7 +4,6 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
-import java.util.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
@@ -40,16 +39,8 @@ class ChatServer2 {
         }
     }
 
-    /**
-     * Sends a [message] coming from a [sender] to all the members in the server, including all the connections per member.
-     */
-    private suspend fun broadcast(sender: String, message: String) {
-        val name = memberNames[sender] ?: sender
-        broadcast("[$name] $message")
-    }
-
-    suspend fun broadcastOpenJob() {
-        TODO("everything")
+    suspend fun broadcastOpenJob(message: String) {
+        broadcast(message)
     }
 
     /**
@@ -69,7 +60,7 @@ class ChatServer2 {
 
         // Only when joining the first socket for a member notifies the rest of the users.
         if (list.size == 1) {
-            broadcast("server", "Member joined: $name.")
+            broadcast("Junk Member joined: $name.")
         }
 
 
@@ -109,7 +100,7 @@ class ChatServer2 {
         // and notify the rest of the users about this event.
         if (connections != null && connections.isEmpty()) {
             val name = memberNames.remove(member) ?: member
-            broadcast("server", "Member left: $name.")
+            broadcast("Member left: $name.")
         }
     }
 
@@ -119,7 +110,7 @@ class ChatServer2 {
     ) {
         GlobalScope.launch {
             while (socket.isActive) {
-                socket.send(Frame.Text("Company2 ${LocalDateTime.now()}"))
+//                socket.send(Frame.Text("Company2 ${LocalDateTime.now()}"))
                 delay(5000)
             }
             println("Closed for member $member")
